@@ -25,8 +25,8 @@ class ExceptionCustom : ResponseEntityExceptionHandler() {
 
     return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR)
   }
-  @ExceptionHandler(UnsuportedException::class)
-  fun handleBadRequest(ex: UnsuportedException, request: WebRequest): ResponseEntity<ExceptionResponse> {
+  @ExceptionHandler(ResourceNotFoundException::class)
+  fun handleBadRequest(ex: ResourceNotFoundException, request: WebRequest): ResponseEntity<ExceptionResponse> {
     
     val exceptionResponse = ExceptionResponse(
       Date(),
@@ -34,6 +34,6 @@ class ExceptionCustom : ResponseEntityExceptionHandler() {
       request.getDescription(false)
     )
 
-    return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR)
+    return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND)
   }
 }
