@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.http.ResponseEntity
 import org.springframework.http.MediaType
 
-import io.savioroamrio10.spring_kotlin.model.Person
+import io.savioroamrio10.spring_kotlin.data.vo.v1.PersonVO
+import io.savioroamrio10.spring_kotlin.data.vo.v2.PersonVO as PersonVOV2
 import io.savioroamrio10.spring_kotlin.services.PersonServices
 
 @RestController
@@ -19,34 +21,40 @@ import io.savioroamrio10.spring_kotlin.services.PersonServices
 class PersonController{
 
   @Autowired
-  private lateinit var service: PersonServices
+  private lateinit var service: PersonServices 
 
   companion object {
     private const val TYPE = MediaType.APPLICATION_JSON_VALUE
   }
   
   @GetMapping(produces = [TYPE])
-  fun findAll(): List<Person>{
+  fun findAll(): List<PersonVO>{
     return service.findAll()
   }
 
   @GetMapping(value = ["/{id}"], produces = [TYPE])
-  fun findById(@PathVariable(value = "id") id: Long): Person{
+  fun findById(@PathVariable(value = "id") id: Long): PersonVO{
     return service.findById(id)
   }
 
   @PostMapping(consumes = [TYPE], produces = [TYPE])
-  fun create(@RequestBody person: Person): Person{
+  fun create(@RequestBody person: PersonVO): PersonVO{
     return service.create(person)
   }
 
+  @PostMapping(value="v2", consumes = [TYPE], produces = [TYPE])
+  fun createV2(@RequestBody person: PersonVOV2): PersonVOV2{
+    return service.createV2(person)
+  }
+
   @PutMapping(value = ["/{id}"],consumes = [TYPE], produces = [TYPE])
-  fun update(@PathVariable(value = "id") id: Long, @RequestBody person: Person): Person{
+  fun update(@PathVariable(value = "id") id: Long, @RequestBody person: PersonVO): PersonVO{
     return service.update(id, person)
   }
 
   @DeleteMapping(value = ["/{id}"])
-  fun delete(@PathVariable(value = "id") id: Long){
+  fun delete(@PathVariable(value = "id") id: Long): ResponseEntity<Void>{
     service.delete(id)
+    return ResponseEntity.noContent().build()
   }
 }
