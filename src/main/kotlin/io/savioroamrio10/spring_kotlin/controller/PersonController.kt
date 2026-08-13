@@ -17,7 +17,7 @@ import io.savioroamrio10.spring_kotlin.data.vo.v2.PersonVO as PersonVOV2
 import io.savioroamrio10.spring_kotlin.services.PersonServices
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 class PersonController{
 
   @Autowired
@@ -42,7 +42,7 @@ class PersonController{
     return service.create(person)
   }
 
-  @PostMapping(value="v2", consumes = [TYPE], produces = [TYPE])
+  @PostMapping(value = ["/{id}"], consumes = [TYPE], produces = [TYPE])
   fun createV2(@RequestBody person: PersonVOV2): PersonVOV2{
     return service.createV2(person)
   }

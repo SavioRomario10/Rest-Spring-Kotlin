@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import io.savioroamrio10.spring_kotlin.mapper.DozerMapper
+import io.savioroamrio10.spring_kotlin.mapper.custom.PersonMapper
 
 import io.savioroamrio10.spring_kotlin.repository.PersonRepository
 import io.savioroamrio10.spring_kotlin.exception.ResourceNotFoundException
@@ -22,6 +23,9 @@ class PersonServices{
 
   @Autowired
   private lateinit var repository: PersonRepository
+
+  @Autowired
+  private lateinit var personMapper: PersonMapper
   
   private val logger = Logger.getLogger(PersonServices::class.java.name)
 
@@ -56,13 +60,13 @@ class PersonServices{
 
   fun createV2(person: PersonVOV2): PersonVOV2{
 
-    var enttity: Person = DozerMapper.parseObject(person, Person::class.java)
+    var enttity: Person = personMapper.mapVOToEntity(person)
 
     val personSalva = repository.save(enttity)
 
     logger.info("Creating one person! " + personSalva.toString())
     
-    return DozerMapper.parseObject(personSalva, PersonVOV2::class.java)
+    return personMapper.mapEntityToVO(personSalva)
   }
 
   fun update(id: Long, person: PersonVO): PersonVO{
