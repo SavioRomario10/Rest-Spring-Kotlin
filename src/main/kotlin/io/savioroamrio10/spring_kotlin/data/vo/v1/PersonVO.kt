@@ -1,13 +1,14 @@
 package io.savioroamrio10.spring_kotlin.data.vo.v1
 
+import org.springframework.hateoas.RepresentationModel
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 @JsonPropertyOrder("id", "first_name", "last_name", "address", "gender")
-class PersonVO(
+open class PersonVO(
 
-  var id: Long = 0,
+  var key: Long = 0,
 
   @field:JsonProperty("first_name")
   var firstName: String = "",
@@ -18,4 +19,4 @@ class PersonVO(
 
   @JsonIgnore
   var gender: String = ""
-)
+):RepresentationModel<PersonVO>()
