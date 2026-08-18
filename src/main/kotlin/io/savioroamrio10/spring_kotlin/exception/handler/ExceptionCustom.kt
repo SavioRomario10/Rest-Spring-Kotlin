@@ -10,6 +10,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
+import io.savioroamrio10.spring_kotlin.exception.ExceptionResponse
+import io.savioroamrio10.spring_kotlin.exception.ResourceNotFoundException
+import io.savioroamrio10.spring_kotlin.exception.InvalidJwtException
+
 @ControllerAdvice
 @RestController
 class ExceptionCustom : ResponseEntityExceptionHandler() {
@@ -35,5 +39,17 @@ class ExceptionCustom : ResponseEntityExceptionHandler() {
     )
 
     return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND)
+  }
+
+  @ExceptionHandler(InvalidJwtException::class)
+  fun handleInvalidJwtException(ex: InvalidJwtException, request: WebRequest): ResponseEntity<ExceptionResponse> {
+    
+    val exceptionResponse = ExceptionResponse(
+      Date(),
+      ex.message ?: "An error occurred",
+      request.getDescription(false)
+    )
+
+    return ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.FORBIDDEN)
   }
 }
