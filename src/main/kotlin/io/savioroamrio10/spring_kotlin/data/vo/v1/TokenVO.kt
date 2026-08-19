@@ -4,7 +4,7 @@ import java.util.*
 
 data class TokenVO(
   val username: String? = null,
-  val authentication: Boolean? = null,
+  val authenticated: Boolean? = null,
   val created: Date? = null,
   val expiration: Date? = null,
   val accessToken: String? = null,

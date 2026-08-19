@@ -1,7 +1,7 @@
 package io.savioroamrio10.spring_kotlin.model
 
 import org.springframework.security.core.userdetails.UserDetails
-import javax.persistence.*
+import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
@@ -37,14 +37,15 @@ class User: UserDetails{
   @Column(name = "enabled")
   var enabled: Boolean? = null
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(
-    name = "users_permissions", 
-    joinColumns = [JoinColumn(name = "user_id")], inverseJoinColumns = [JoinColumn(name = "permission_id")]
-  )
-  var permissions: List<Permission>? = null
+@ManyToMany(fetch = FetchType.EAGER)
+@JoinTable(
+    name = "user_permission",
+    joinColumns = [JoinColumn(name = "id_user")],
+    inverseJoinColumns = [JoinColumn(name = "id_permission")]
+)
+var permissions: List<Permission>? = null
 
-  val role: List<String?>
+  val roles: List<String?>
     get() {
       val role = mutableListOf<String?>()
       for (permission in permissions!!) {

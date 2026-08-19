@@ -12,7 +12,7 @@ import java.util.logging.Logger
 @Service
 class UserService(@field:Autowired var repository: UserRepository) : UserDetailsService{
 
-  private val logger = Logger.getLogger(UserServvice::class.java.name)
+  private val logger = Logger.getLogger(UserService::class.java.name)
 
   override fun loadUserByUsername(username: String?): UserDetails? {
     logger.info("Finding one user! $username")
