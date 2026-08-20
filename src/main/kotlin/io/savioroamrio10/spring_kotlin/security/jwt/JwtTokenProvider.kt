@@ -67,6 +67,23 @@ class JwtTokenProvider {
     )
   }
 
+  fun refreshToken( refreshToken: String ): TokenVO {
+
+    val token: Striong = ""
+
+    if( refreshToken.contains("Bearer ") ) token = refreshToken.substring("Bearer ".length)
+    
+    val verifier: JWTVerifier = JWT.require(algorithm).build()
+
+    val decodedJWT = verifier.verify(token)
+
+    val userName: String = decodeJWT.subject
+
+    val roles: List<String?> = decodedJWT.getClaim("roles").asList(String::class.java)
+
+    return createAccessToken(userName, roles)
+  }
+
   private fun getAccessToken( username: String, roles: List<String?>, now: Date, validity: Date ): String {
 
     val issuerUrl =

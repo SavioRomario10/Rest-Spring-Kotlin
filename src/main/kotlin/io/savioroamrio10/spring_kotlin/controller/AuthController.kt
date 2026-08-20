@@ -40,4 +40,25 @@ class AuthController {
       authService.signin(data)
     }
   }
+
+  @PutMapping(value = ["/refresh/{username}"])
+  @Operation(summary = "Refresh token", description = "Refresh token", tags = ["Authentication"])
+  fun refreshToken(@PathVariable("username") username: String?, @RequestHeader("Authorization") refreshToken: String? ): ResponseEntity<*> {
+
+    return if (
+      username == null ||
+      refreshToken == null ||
+      username.isNullOrBlank() ||
+      refreshToken.isNullOrBlank()
+    ) {
+
+      ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .body("Invalid username/password supplied")
+
+    } else {
+
+      authService.refreshToken(username, refreshToken)
+    }
+  }
 }
