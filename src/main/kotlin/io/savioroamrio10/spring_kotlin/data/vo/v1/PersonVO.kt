@@ -18,5 +18,6 @@ open class PersonVO(
   var address: String = "",
 
   @JsonIgnore
-  var gender: String = ""
+  var gender: String = "",
+  var enable: Boolean = true
 ):RepresentationModel<PersonVO>()

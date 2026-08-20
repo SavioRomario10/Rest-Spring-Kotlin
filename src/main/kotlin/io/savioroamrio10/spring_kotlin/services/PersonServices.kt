@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
+
 import io.savioroamrio10.spring_kotlin.controller.PersonController
 import io.savioroamrio10.spring_kotlin.mapper.DozerMapper
 import io.savioroamrio10.spring_kotlin.mapper.custom.PersonMapper
@@ -18,6 +23,8 @@ import io.savioroamrio10.spring_kotlin.exception.ResourceNotFoundException
 import io.savioroamrio10.spring_kotlin.model.Person
 import io.savioroamrio10.spring_kotlin.data.vo.v1.PersonVO
 import io.savioroamrio10.spring_kotlin.data.vo.v2.PersonVO as PersonVOV2
+
+import jakarta.transaction.Transactional
 
 @Service
 class PersonServices{
@@ -29,25 +36,18 @@ class PersonServices{
   private lateinit var personMapper: PersonMapper
   
   private val logger = Logger.getLogger(PersonServices::class.java.name)
-
-  fun findAll(): List<PersonVO> {
+ 
+  fun findAll(pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
 
     logger.info("Finding all people!")
 
-    val entities = repository.findAll()
+    val entities = repository.findAll(pageable)
 
-    val vos = DozerMapper.parseListObjects(entities, PersonVO::class.java)
+    val vos = entities.map { it -> DozerMapper.parseObject(it, PersonVO::class.java) }
 
-    for (i in vos.indices) {
-
-      vos[i].key = entities[i].id
-
-      vos[i].add(
-        linkTo(PersonController::class.java)
-          .slash(vos[i].key)
-          .withSelfRel()
-      )
-    }
+    vos.map { it -> it.add(
+      linkTo(methodOn(PersonController::class.java).findById(it.key!!)).withSelfRel()
+    ) }
 
     return vos
   }
@@ -59,6 +59,30 @@ class PersonServices{
     }
 
     logger.info("Finding one person! $entity")
+
+    val personVO = DozerMapper.parseObject(entity, PersonVO::class.java)
+
+    personVO.key = entity.id
+
+    personVO.add(
+    linkTo(PersonController::class.java)
+      .slash(personVO.key)
+      .withSelfRel()
+    )
+
+    return personVO
+  }
+
+  @Transactional
+  fun disablePerson(id: Long): PersonVO {
+
+    val entity = repository.findById(id).orElseThrow {
+      ResourceNotFoundException("No records found for this ID!")
+    }
+
+    repository.desablePerson(id)
+
+    logger.info("Disabling one person! $entity")
 
     val personVO = DozerMapper.parseObject(entity, PersonVO::class.java)
 

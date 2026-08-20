@@ -25,5 +25,8 @@ class Person(
   var address: String = "",
 
   @Column(name = "gender", nullable = false, length = 20)
-  var gender: String = ""
+  var gender: String = "",
+
+  @Column(name = "enabled", nullable = false)
+  var enabled: Boolean = true
 )

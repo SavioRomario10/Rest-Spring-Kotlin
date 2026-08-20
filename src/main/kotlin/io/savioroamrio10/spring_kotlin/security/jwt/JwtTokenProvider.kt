@@ -69,7 +69,7 @@ class JwtTokenProvider {
 
   fun refreshToken( refreshToken: String ): TokenVO {
 
-    val token: Striong = ""
+    var token: String = ""
 
     if( refreshToken.contains("Bearer ") ) token = refreshToken.substring("Bearer ".length)
     
@@ -77,7 +77,7 @@ class JwtTokenProvider {
 
     val decodedJWT = verifier.verify(token)
 
-    val userName: String = decodeJWT.subject
+    var userName: String = decodedJWT.subject
 
     val roles: List<String?> = decodedJWT.getClaim("roles").asList(String::class.java)
 
