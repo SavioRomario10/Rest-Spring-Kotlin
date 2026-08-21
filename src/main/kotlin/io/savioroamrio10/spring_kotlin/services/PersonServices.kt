@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 
+import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.hateoas.EntityModel
@@ -34,6 +35,9 @@ class PersonServices{
 
   @Autowired
   private lateinit var personMapper: PersonMapper
+
+  @Autowired
+  private lateinit var assembler: PagedResourcesAssembler<PersonVO>
   
   private val logger = Logger.getLogger(PersonServices::class.java.name)
  
@@ -49,7 +53,22 @@ class PersonServices{
       linkTo(methodOn(PersonController::class.java).findById(it.key!!)).withSelfRel()
     ) }
 
-    return vos
+    return assembler.toModel(vos)
+  }
+
+  fun findPersonByName(firstName: String, pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
+
+    logger.info("Finding all people!")
+
+    val entities = repository.findPersonByName(firstName, pageable)
+
+    val vos = entities.map { it -> DozerMapper.parseObject(it, PersonVO::class.java) }
+
+    vos.map { it -> it.add(
+      linkTo(methodOn(PersonController::class.java).findById(it.key!!)).withSelfRel()
+    ) }
+
+    return assembler.toModel(vos)
   }
 
   fun findById(id: Long): PersonVO {
